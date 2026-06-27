@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Resume Optimizer AI</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -27,15 +28,64 @@
 
     <button id="analyzeBtn">✨ Analyze with AI</button>
 
-    <div id="loading" class="hidden">⏳ Analyzing... please wait</div>
+    <div id="loading" class="hidden">
+      <div class="spinner"></div>
+      <p>Analyzing your resume with AI...</p>
+    </div>
 
     <div id="result" class="hidden">
-      <h2>📊 Analysis Result</h2>
-      <pre id="resultText"></pre>
+      
+      <!-- Match Score Section -->
+      <div class="score-section">
+        <div class="score-circle">
+          <svg viewBox="0 0 200 200">
+            <circle class="score-bg" cx="100" cy="100" r="85"/>
+            <circle id="scoreProgress" class="score-progress" cx="100" cy="100" r="85"/>
+          </svg>
+          <div class="score-text">
+            <div id="scoreNumber">0%</div>
+            <div class="score-label">Match</div>
+          </div>
+        </div>
+        <div class="score-info">
+          <h2>📊 Your Match Score</h2>
+          <p id="recommendation"></p>
+        </div>
+      </div>
+
+      <!-- Keywords Section -->
+      <div class="keywords-grid">
+        <div class="keyword-box matched">
+          <h3>✅ Matched Keywords</h3>
+          <div id="matchedKeywords" class="pills"></div>
+        </div>
+        <div class="keyword-box missing">
+          <h3>❌ Missing Keywords</h3>
+          <div id="missingKeywords" class="pills"></div>
+        </div>
+      </div>
+
+      <!-- Strengths Section -->
+      <div class="card">
+        <h3>💪 Your Strengths</h3>
+        <ul id="strengthsList"></ul>
+      </div>
+
+      <!-- Skills Gap Section -->
+      <div class="card">
+        <h3>🎯 Skills Gap Analysis</h3>
+        <p id="skillsGap"></p>
+      </div>
+
+      <!-- Improved Bullets Section -->
+      <div class="card">
+        <h3>✨ Improved Resume Bullets</h3>
+        <div id="bulletsList"></div>
+      </div>
+
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
