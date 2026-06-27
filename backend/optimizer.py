@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 from dotenv import load_dotenv
 
@@ -9,12 +10,12 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 def analyze_resume(resume_text: str, job_description: str):
 
     if not GROQ_API_KEY:
-        return "ERROR: GROQ_API_KEY not found. Check your .env file."
+        return {"error": "GROQ_API_KEY not found. Check your .env file."}
 
     prompt = f"""
 You are an expert resume optimization assistant.
 
-Compare the following resume and job description.
+Analyze the following resume against the job description and respond ONLY with valid JSON in the exact format below. Do NOT include any explanation, markdown, or text outside the JSON.
 
 Resume:
 {resume_text}
@@ -22,11 +23,16 @@ Resume:
 Job Description:
 {job_description}
 
-Provide:
-1. Match percentage (0-100%)
-2. Missing keywords
-3. Skills gap analysis
-4. Improved resume bullet suggestions
+Respond with this exact JSON structure:
+{{
+  "match_score": <integer between 0 and 100>,
+  "matched_keywords": [<list of keywords/skills from the resume that match the job description>],
+  "missing_keywords": [<list of important keywords/skills from the job description NOT found in the resume>],
+  "skills_gap": "<2-3 sentence summary of the biggest skill gaps>",
+  "strengths": [<list of 3-5 strengths the candidate already has>],
+  "improved_bullets": [<list of 4-6 improved resume bullet points tailored to the job>],
+  "overall_recommendation": "<1-2 sentence final recommendation>"
+}}
 """
 
     response = requests.post(
@@ -39,18 +45,23 @@ Provide:
             "model": "llama-3.1-8b-instant",
             "messages": [
                 {"role": "user", "content": prompt}
-            ]
+            ],
+            "response_format": {"type": "json_object"},
+            "temperature": 0.3
         }
     )
 
     data = response.json()
 
-    # Debug: print full response to terminal
     print("=" * 50)
     print("GROQ RESPONSE:", data)
     print("=" * 50)
 
     if "choices" in data:
-        return data["choices"][0]["message"]["content"]
+        content = data["choices"][0]["message"]["content"]
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError:
+            return {"error": "AI did not return valid JSON", "raw": content}
     else:
-        return f"API ERROR: {data}"
+        return {"error": "API call failed", "details": data}
