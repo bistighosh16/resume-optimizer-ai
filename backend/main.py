@@ -5,7 +5,6 @@ from backend.optimizer import analyze_resume
 
 app = FastAPI()
 
-# Allow frontend to access backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,4 +23,4 @@ def read_root():
 @app.post("/analyze")
 def analyze(request: ResumeRequest):
     result = analyze_resume(request.resume, request.job_description)
-    return {"analysis": result}
+    return result
