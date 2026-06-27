@@ -18,7 +18,7 @@ An AI-powered web application that analyzes resumes against job descriptions, pr
 
 ## 🚀 Live Demo
 
-[Try it here](#) *(coming soon)*
+https://resume-optimizer-ai-bice.vercel.app/
 
 ## 📦 Local Setup
 
