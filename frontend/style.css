@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
 body {
@@ -20,6 +20,7 @@ body {
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 
+/* Header */
 header {
   text-align: center;
   margin-bottom: 40px;
@@ -29,6 +30,7 @@ header h1 {
   font-size: 3rem;
   color: #333;
   margin-bottom: 10px;
+  font-weight: 800;
 }
 
 header p {
@@ -36,6 +38,7 @@ header p {
   font-size: 1.15rem;
 }
 
+/* Inputs */
 .inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -60,14 +63,16 @@ textarea {
   font-size: 15px;
   resize: vertical;
   transition: border 0.3s;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 textarea:focus {
   outline: none;
   border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+/* Button */
 button {
   width: 100%;
   padding: 20px;
@@ -78,97 +83,269 @@ button {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.3s;
 }
 
 button:hover {
   transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
 
+/* Loading Spinner */
 #loading {
   text-align: center;
-  margin-top: 24px;
-  font-size: 1.2rem;
-  color: #667eea;
+  margin-top: 40px;
 }
 
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid #e0e0e0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#loading p {
+  color: #667eea;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Result Container */
 #result {
   margin-top: 40px;
-  padding: 36px 40px;
-  background: #f7f8fc;
-  border-radius: 14px;
-  border-left: 5px solid #667eea;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-  overflow: hidden;
-  max-width: 100%;
 }
 
-#result h2 {
-  margin-bottom: 20px;
+/* Score Section */
+.score-section {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  padding: 40px;
+  background: linear-gradient(135deg, #f7f8fc 0%, #ebeefa 100%);
+  border-radius: 16px;
+  margin-bottom: 30px;
+}
+
+.score-circle {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+.score-circle svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-bg {
+  fill: none;
+  stroke: #e0e0e0;
+  stroke-width: 15;
+}
+
+.score-progress {
+  fill: none;
+  stroke: url(#gradient);
+  stroke: #667eea;
+  stroke-width: 15;
+  stroke-linecap: round;
+  stroke-dasharray: 534;
+  stroke-dashoffset: 534;
+  transition: stroke-dashoffset 1.5s ease-out, stroke 0.5s;
+}
+
+.score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+#scoreNumber {
+  font-size: 3rem;
+  font-weight: 800;
   color: #333;
+}
+
+.score-label {
+  font-size: 1rem;
+  color: #777;
+  font-weight: 500;
+}
+
+.score-info h2 {
   font-size: 1.8rem;
-}
-
-#resultText {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 16px;
-  line-height: 1.8;
+  margin-bottom: 12px;
   color: #333;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
 }
 
-#resultText h1, #resultText h2, #resultText h3 {
-  margin: 22px 0 12px 0;
-  color: #667eea;
-  font-size: 1.4rem;
+.score-info p {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.6;
 }
 
-#resultText strong {
-  color: #764ba2;
-  font-weight: 600;
+/* Keywords Grid */
+.keywords-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 30px;
 }
 
-#resultText ul, #resultText ol {
-  margin-left: 30px;
+.keyword-box {
+  padding: 28px;
+  border-radius: 14px;
+  background: #f7f8fc;
+}
+
+.keyword-box h3 {
   margin-bottom: 16px;
-  padding-right: 20px;
+  font-size: 1.3rem;
+  color: #333;
 }
 
-#resultText li {
-  margin-bottom: 8px;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-  white-space: normal;
-  max-width: 100%;
+.keyword-box.matched {
+  border-left: 5px solid #10b981;
 }
 
-#resultText p {
-  margin-bottom: 14px;
+.keyword-box.missing {
+  border-left: 5px solid #ef4444;
 }
 
-#resultText code {
-  background: #eef0f7;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
+.pill {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.pill.matched {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.pill.missing {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+/* Generic Card */
+.card {
+  background: #f7f8fc;
+  padding: 28px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  border-left: 5px solid #667eea;
+}
+
+.card h3 {
+  margin-bottom: 16px;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.card p {
+  color: #444;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.card ul {
+  padding-left: 20px;
+}
+
+.card li {
+  margin-bottom: 10px;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Bullets */
+.bullet-item {
+  background: white;
+  padding: 18px 20px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  transition: all 0.2s;
+}
+
+.bullet-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-color: #667eea;
+}
+
+.bullet-text {
+  flex: 1;
+  color: #333;
+  line-height: 1.6;
+}
+
+.copy-btn {
+  width: auto;
+  padding: 8px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: #764ba2;
+  transform: none;
+  box-shadow: none;
+}
+
+.copy-btn.copied {
+  background: #10b981;
+}
+
+/* Utility */
 .hidden {
   display: none;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .container {
     padding: 30px 25px;
   }
   
-  .inputs {
+  .inputs, .keywords-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .score-section {
+    flex-direction: column;
+    text-align: center;
   }
   
   header h1 {
