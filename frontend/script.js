@@ -27,6 +27,80 @@ const generatedResume = document.getElementById("generatedResume");
 const resumePreview = document.getElementById("resumePreview");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 
+// ===== File Upload =====
+const uploadArea = document.getElementById("uploadArea");
+const fileInput = document.getElementById("fileInput");
+const uploadStatus = document.getElementById("uploadStatus");
+
+uploadArea.addEventListener("click", () => fileInput.click());
+
+uploadArea.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  uploadArea.classList.add("drag-over");
+});
+
+uploadArea.addEventListener("dragleave", () => {
+  uploadArea.classList.remove("drag-over");
+});
+
+uploadArea.addEventListener("drop", (e) => {
+  e.preventDefault();
+  uploadArea.classList.remove("drag-over");
+  const file = e.dataTransfer.files[0];
+  if (file) handleFileUpload(file);
+});
+
+fileInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) handleFileUpload(file);
+});
+
+async function handleFileUpload(file) {
+  const validTypes = [".pdf", ".docx", ".txt"];
+  const fileName = file.name.toLowerCase();
+  const isValid = validTypes.some(type => fileName.endsWith(type));
+
+  if (!isValid) {
+    showUploadStatus("error", "❌ Please upload a PDF, DOCX, or TXT file");
+    return;
+  }
+
+  showUploadStatus("loading", "⏳ Reading your resume...");
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch(`${API_BASE}/upload-resume`, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.text && data.text.startsWith("ERROR:")) {
+      showUploadStatus("error", "❌ " + data.text.replace("ERROR: ", ""));
+    } else if (data.text && data.text.trim().length > 0) {
+      document.getElementById("resume").value = data.text;
+      showUploadStatus("success", `✅ Loaded: ${data.filename}`);
+    } else {
+      showUploadStatus("error", "❌ Could not extract text. Try a different file or paste manually.");
+    }
+  } catch (error) {
+    showUploadStatus("error", "❌ Upload failed: " + error.message);
+  }
+}
+
+function showUploadStatus(type, message) {
+  uploadStatus.className = `upload-status ${type}`;
+  uploadStatus.textContent = message;
+  uploadStatus.classList.remove("hidden");
+
+  if (type === "success") {
+    setTimeout(() => uploadStatus.classList.add("hidden"), 4000);
+  }
+}
+
 // ===== Analyze Resume =====
 analyzeBtn.addEventListener("click", async () => {
   const resume = resumeInput.value.trim();
@@ -56,6 +130,7 @@ analyzeBtn.addEventListener("click", async () => {
     }
 
     displayResults(data);
+    saveToHistory(resume, jobDescription, data);
     result.classList.remove("hidden");
   } catch (error) {
     alert("Error: " + error.message);
@@ -301,3 +376,198 @@ downloadPdfBtn.addEventListener("click", async () => {
     downloadPdfBtn.disabled = false;
   }
 });
+
+// ===== Edit Resume =====
+const editBtn = document.getElementById("editBtn");
+let isEditMode = false;
+let editHint = null;
+
+editBtn.addEventListener("click", () => {
+  isEditMode = !isEditMode;
+  toggleEditMode(isEditMode);
+});
+
+function toggleEditMode(enable) {
+  const editableElements = resumePreview.querySelectorAll(
+    ".resume-name, .resume-title, .resume-contact, .resume-summary, " +
+    ".resume-skill, .resume-job-role, .resume-job-company, .resume-job-duration, " +
+    ".resume-job-bullets li, .resume-edu-degree, .resume-edu-institution, " +
+    ".resume-project-name, .resume-project-desc"
+  );
+
+  if (enable) {
+    resumePreview.classList.add("editing");
+    editBtn.classList.add("active");
+    editBtn.textContent = "✓ Done Editing";
+    editableElements.forEach(el => el.setAttribute("contenteditable", "true"));
+    
+    // Add edit hint
+    if (!editHint) {
+      editHint = document.createElement("div");
+      editHint.className = "edit-hint";
+      editHint.textContent = "✏️ Click any text to edit it. Click 'Done Editing' when finished.";
+      resumePreview.parentNode.insertBefore(editHint, resumePreview);
+    }
+  } else {
+    resumePreview.classList.remove("editing");
+    editBtn.classList.remove("active");
+    editBtn.textContent = "✏️ Edit";
+    editableElements.forEach(el => el.removeAttribute("contenteditable"));
+    
+    // Remove edit hint
+    if (editHint) {
+      editHint.remove();
+      editHint = null;
+    }
+  }
+}
+
+// Also reset edit mode when generating a new resume
+const originalRenderResume = renderResume;
+renderResume = function(data) {
+  isEditMode = false;
+  if (editHint) {
+    editHint.remove();
+    editHint = null;
+  }
+  editBtn.classList.remove("active");
+  editBtn.textContent = "✏️ Edit";
+  originalRenderResume(data);
+};
+
+// ===== History Feature =====
+const HISTORY_KEY = "resume_optimizer_history";
+const historyToggle = document.getElementById("historyToggle");
+const historyPanel = document.getElementById("historyPanel");
+const historyOverlay = document.getElementById("historyOverlay");
+const closeHistoryBtn = document.getElementById("closeHistoryBtn");
+const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+const historyList = document.getElementById("historyList");
+
+historyToggle.addEventListener("click", () => {
+  historyPanel.classList.remove("hidden");
+  historyOverlay.classList.remove("hidden");
+  renderHistory();
+});
+
+closeHistoryBtn.addEventListener("click", closeHistory);
+historyOverlay.addEventListener("click", closeHistory);
+
+function closeHistory() {
+  historyPanel.classList.add("hidden");
+  historyOverlay.classList.add("hidden");
+}
+
+clearHistoryBtn.addEventListener("click", () => {
+  if (confirm("Are you sure you want to delete all history?")) {
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+  }
+});
+
+function saveToHistory(resume, jobDescription, analysisData) {
+  const history = getHistory();
+  
+  const entry = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    resume: resume,
+    jobDescription: jobDescription,
+    analysis: analysisData,
+    score: analysisData.match_score || 0,
+    jobTitle: extractJobTitle(jobDescription)
+  };
+
+  history.unshift(entry);
+  
+  if (history.length > 20) {
+    history.splice(20);
+  }
+
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function getHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function extractJobTitle(jobDescription) {
+  const firstLine = jobDescription.split("\n")[0].trim();
+  if (firstLine.length > 0 && firstLine.length < 80) {
+    return firstLine;
+  }
+  return jobDescription.substring(0, 50) + "...";
+}
+
+function renderHistory() {
+  const history = getHistory();
+
+  if (history.length === 0) {
+    historyList.innerHTML = '<div class="history-empty">No analyses yet. Run your first analysis!</div>';
+    return;
+  }
+
+  historyList.innerHTML = "";
+
+  history.forEach(entry => {
+    const item = document.createElement("div");
+    item.className = "history-item";
+
+    const scoreClass = entry.score >= 70 ? "high" : entry.score >= 40 ? "medium" : "low";
+    const date = new Date(entry.date).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit"
+    });
+
+    item.innerHTML = `
+      <button class="history-item-delete" data-id="${entry.id}" title="Delete">🗑️</button>
+      <div class="history-item-score ${scoreClass}">${entry.score}% Match</div>
+      <div class="history-item-title">${escapeHtml(entry.jobTitle)}</div>
+      <div class="history-item-date">${date}</div>
+    `;
+
+    item.addEventListener("click", (e) => {
+      if (e.target.classList.contains("history-item-delete")) return;
+      loadHistoryItem(entry);
+    });
+
+    item.querySelector(".history-item-delete").addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteHistoryItem(entry.id);
+    });
+
+    historyList.appendChild(item);
+  });
+}
+
+function loadHistoryItem(entry) {
+  document.getElementById("resume").value = entry.resume;
+  document.getElementById("jobDescription").value = entry.jobDescription;
+  
+  displayResults(entry.analysis);
+  result.classList.remove("hidden");
+  
+  generatedResume.classList.add("hidden");
+  
+  closeHistory();
+  
+  result.scrollIntoView({ behavior: "smooth" });
+}
+
+function deleteHistoryItem(id) {
+  const history = getHistory().filter(entry => entry.id !== id);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  renderHistory();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}

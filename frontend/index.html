@@ -9,16 +9,45 @@
 <body>
 
   <div class="container">
-    <header>
-      <button id="themeToggle" class="theme-toggle">🌙</button>
-      <h1>🚀 Resume Optimizer AI</h1>
-      <p>Match your resume to any job description using AI</p>
-    </header>
+<header>
+  <button id="themeToggle" class="theme-toggle">🌙</button>
+  <button id="historyToggle" class="history-toggle">📜 History</button>
+  <h1>🚀 Resume Optimizer AI</h1>
+  <p>Match your resume to any job description using AI</p>
+</header>
+
+<!-- History Panel -->
+<div id="historyPanel" class="history-panel hidden">
+  <div class="history-header">
+    <h2>📜 Your History</h2>
+    <button id="closeHistoryBtn" class="close-btn">✕</button>
+  </div>
+  <div class="history-actions">
+    <button id="clearHistoryBtn" class="clear-btn">🗑️ Clear All</button>
+  </div>
+  <div id="historyList" class="history-list">
+    <div class="history-empty">No analyses yet. Run your first analysis!</div>
+  </div>
+</div>
+
+<!-- Overlay for mobile -->
+<div id="historyOverlay" class="history-overlay hidden"></div>
 
     <div class="inputs">
       <div class="box">
         <label>📄 Your Resume</label>
-        <textarea id="resume" placeholder="Paste your resume here..."></textarea>
+        <div class="upload-area" id="uploadArea">
+          <input type="file" id="fileInput" accept=".pdf,.docx,.txt" hidden>
+          <div class="upload-content">
+            <span class="upload-icon">📎</span>
+            <span class="upload-text">
+              <strong>Click to upload</strong> or drag & drop
+              <br><small>PDF, DOCX, or TXT</small>
+            </span>
+          </div>
+        </div>
+        <div id="uploadStatus" class="upload-status hidden"></div>
+        <textarea id="resume" placeholder="Or paste your resume here..."></textarea>
       </div>
 
       <div class="box">
@@ -92,13 +121,16 @@
       <p>Building your optimized resume...</p>
     </div>
 
-    <div id="generatedResume" class="hidden">
-      <div class="resume-actions">
-        <h2>📄 Your Optimized Resume</h2>
-        <button id="downloadPdfBtn" class="download-btn">📥 Download as PDF</button>
-      </div>
-      <div id="resumePreview" class="resume-preview"></div>
+<div id="generatedResume" class="hidden">
+  <div class="resume-actions">
+    <h2>📄 Your Optimized Resume</h2>
+    <div class="action-buttons">
+      <button id="editBtn" class="edit-btn">✏️ Edit</button>
+      <button id="downloadPdfBtn" class="download-btn">📥 Download as PDF</button>
     </div>
+  </div>
+  <div id="resumePreview" class="resume-preview"></div>
+</div>
 
   </div>
 
