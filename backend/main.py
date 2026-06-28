@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from backend.optimizer import analyze_resume
+from backend.optimizer import analyze_resume, generate_optimized_resume
 
 app = FastAPI()
 
@@ -23,4 +23,9 @@ def read_root():
 @app.post("/analyze")
 def analyze(request: ResumeRequest):
     result = analyze_resume(request.resume, request.job_description)
+    return result
+
+@app.post("/generate-resume")
+def generate(request: ResumeRequest):
+    result = generate_optimized_resume(request.resume, request.job_description)
     return result
