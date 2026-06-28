@@ -1,31 +1,50 @@
 # 🚀 Resume Optimizer AI
 
-An AI-powered web application that analyzes resumes against job descriptions, providing match scores, missing keywords, skill gap analysis, and AI-generated bullet point suggestions.
+An AI-powered web application that analyzes your resume against any job description, generates a complete optimized resume tailored to the role, and lets you download it as a polished PDF — all powered by **LLaMA 3.1** via Groq's lightning-fast inference API.
+
+> Built with ❤️ to help job seekers land their dream roles.
+
+## 🌍 Live Demo
+
+**[Try it now → resume-optimizer-ai-bice.vercel.app](https://resume-optimizer-ai-bice.vercel.app/)**
+
+---
 
 ## ✨ Features
 
-- 📊 **Match Score Analysis** — Get a percentage match between your resume and any job description
-- 🔍 **Missing Keywords Detection** — Identify critical keywords from the job description not present in your resume
-- 📋 **Skills Gap Analysis** — Understand exactly what skills you're missing
-- ✍️ **AI Bullet Point Suggestions** — Get optimized resume bullet points tailored to the job
+### 🎯 Smart Analysis
+- 📊 **Animated Match Score** — Visual circular progress bar showing your resume-job alignment (0–100%)
+- ✅ **Matched Keywords** — Color-coded pills showing skills/keywords already in your resume
+- ❌ **Missing Keywords** — Identify critical keywords from the job description you're missing
+- 💪 **Strengths Highlight** — AI identifies your top selling points for the role
+- 🎯 **Skills Gap Analysis** — Detailed breakdown of what you need to improve
+- ✍️ **Improved Bullet Points** — AI-rewritten resume bullets with copy-to-clipboard buttons
+
+### 📝 AI Resume Generator
+- ✨ **Complete Resume Rewrite** — One-click generation of a fully optimized resume tailored to the target job
+- 🎨 **Beautiful Preview** — Clean, professional formatting with sections for Summary, Skills, Experience, Education, and Projects
+- 📥 **PDF Download** — Export your optimized resume as a high-quality PDF ready to send to recruiters
+
+### 🎨 User Experience
+- 🌙 **Dark/Light Mode** — Toggle between themes with preference saved in browser
+- 📱 **Fully Responsive** — Works beautifully on desktop, tablet, and mobile
+- ⚡ **Real-Time Feedback** — Loading spinners, smooth animations, and instant results
+- 🎭 **Modern UI** — Gradient designs, smooth transitions, and polished typography
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Backend:** Python, FastAPI, Uvicorn
-- **AI Model:** LLaMA 3.1 (via Groq API)
-- **Frontend:** HTML, CSS, JavaScript
-- **Deployment:** Render (Backend), Vercel (Frontend)
+| Layer | Technology |
+|---|---|
+| **Backend** | Python, FastAPI, Uvicorn |
+| **AI Model** | LLaMA 3.1 8B Instant (via Groq API) |
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
+| **PDF Generation** | jsPDF + html2canvas |
+| **Backend Hosting** | Render |
+| **Frontend Hosting** | Vercel |
+| **Version Control** | Git, GitHub |
 
-## 🚀 Live Demo
+---
 
-https://resume-optimizer-ai-bice.vercel.app/
-
-## 📦 Local Setup
-
-### Backend
-
-```bash
-cd resume-optimizer
-python -m venv venv
-venv\Scripts\activate
-pip install -r backend/requirements.txt
+## 🏗️ Architecture
