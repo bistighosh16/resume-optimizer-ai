@@ -10,6 +10,7 @@
 
   <div class="container">
     <header>
+      <button id="themeToggle" class="theme-toggle">🌙</button>
       <h1>🚀 Resume Optimizer AI</h1>
       <p>Match your resume to any job description using AI</p>
     </header>
@@ -35,7 +36,6 @@
 
     <div id="result" class="hidden">
       
-      <!-- Match Score Section -->
       <div class="score-section">
         <div class="score-circle">
           <svg viewBox="0 0 200 200">
@@ -53,7 +53,6 @@
         </div>
       </div>
 
-      <!-- Keywords Section -->
       <div class="keywords-grid">
         <div class="keyword-box matched">
           <h3>✅ Matched Keywords</h3>
@@ -65,27 +64,46 @@
         </div>
       </div>
 
-      <!-- Strengths Section -->
       <div class="card">
         <h3>💪 Your Strengths</h3>
         <ul id="strengthsList"></ul>
       </div>
 
-      <!-- Skills Gap Section -->
       <div class="card">
         <h3>🎯 Skills Gap Analysis</h3>
         <p id="skillsGap"></p>
       </div>
 
-      <!-- Improved Bullets Section -->
       <div class="card">
         <h3>✨ Improved Resume Bullets</h3>
         <div id="bulletsList"></div>
       </div>
 
+      <div class="generate-cta">
+        <h2>📝 Want a fully optimized resume?</h2>
+        <p>Let AI rewrite your entire resume tailored to this job!</p>
+        <button id="generateBtn">✨ Build My Optimized Resume</button>
+      </div>
+
     </div>
+
+    <div id="resumeLoading" class="hidden">
+      <div class="spinner"></div>
+      <p>Building your optimized resume...</p>
+    </div>
+
+    <div id="generatedResume" class="hidden">
+      <div class="resume-actions">
+        <h2>📄 Your Optimized Resume</h2>
+        <button id="downloadPdfBtn" class="download-btn">📥 Download as PDF</button>
+      </div>
+      <div id="resumePreview" class="resume-preview"></div>
+    </div>
+
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
