@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from backend.optimizer import analyze_resume, generate_optimized_resume
+from backend.parser import extract_resume_text
 
 app = FastAPI()
 
@@ -29,3 +30,10 @@ def analyze(request: ResumeRequest):
 def generate(request: ResumeRequest):
     result = generate_optimized_resume(request.resume, request.job_description)
     return result
+
+@app.post("/upload-resume")
+async def upload_resume(file: UploadFile = File(...)):
+    """Extract text from an uploaded PDF, DOCX, or TXT file."""
+    contents = await file.read()
+    text = extract_resume_text(contents, file.filename)
+    return {"text": text, "filename": file.filename}
